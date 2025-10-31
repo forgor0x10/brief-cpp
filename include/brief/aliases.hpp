@@ -25,6 +25,10 @@
 #define mut auto
 #define in :
 
+#define main(...) main(__VA_ARGS__)->int
+
+#define use(x) namespace x = brief::x;
+
 using i8 = std::int8_t;
 using i16 = std::int16_t;
 using i32 = std::int32_t;
@@ -66,6 +70,14 @@ template <typename T> using Optional = std::optional<T>;
 template <typename T> using SharedPtr = std::shared_ptr<T>;
 template <typename T> using UniquePtr = std::unique_ptr<T>;
 template <typename T> using WeakPtr = std::weak_ptr<T>;
+
+using StrStream = std::stringstream;
+using IStrStream = std::istringstream;
+using OStrStream = std::ostringstream;
+
+using FileStream = std::fstream;
+using IFileStream = std::ifstream;
+using OFileStream = std::ofstream;
 
 using Mutex = std::mutex;
 using LockGuard = std::lock_guard<Mutex>;
