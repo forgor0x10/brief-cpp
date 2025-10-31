@@ -13,7 +13,7 @@
     ({                                                                                             \
         auto res = (expr);                                                                         \
         if (res.is_err()) { return Err(res.unwrap_err()); }                                        \
-        res;                                                                                       \
+        res.unwrap();                                                                              \
     })
 
 #if !defined(__GNUC__) && !defined(__clang__)
@@ -55,8 +55,9 @@ template <typename T, typename E> class Result {
     };
 
   public:
-    Result(Ok<T> ok_v) : m_is_ok(true), m_ok_value(ok_v.get_value()) {}
-    Result(Err<E> err_v) : m_is_ok(false), m_err_value(err_v.get_value()) {}
+    Result(Ok<T> ok_v) : m_is_ok(true) { new (&m_ok_value) T(std::move(ok_v.get_value())); }
+
+    Result(Err<E> err_v) : m_is_ok(false) { new (&m_err_value) E(std::move(err_v.get_value())); }
 
     Result(const Result &other) : m_is_ok(other.m_is_ok) {
         if (m_is_ok) {
@@ -64,6 +65,54 @@ template <typename T, typename E> class Result {
         } else {
             new (&m_err_value) E(other.m_err_value);
         }
+    }
+
+    Result(Result &&other) : m_is_ok(other.m_is_ok) {
+        if (m_is_ok) {
+            new (&m_ok_value) T(std::move(other.m_ok_value));
+        } else {
+            new (&m_err_value) E(std::move(other.m_err_value));
+        }
+    }
+
+    auto operator=(const Result &other) -> Result & {
+        if (this != &other) {
+            if (m_is_ok) {
+                m_ok_value.~T();
+            } else {
+                m_err_value.~E();
+            }
+
+            m_is_ok = other.m_is_ok;
+
+            if (m_is_ok) {
+                new (&m_ok_value) T(other.m_ok_value);
+            } else {
+                new (&m_err_value) E(other.m_err_value);
+            }
+        }
+
+        return *this;
+    }
+
+    auto operator=(Result &&other) noexcept -> Result & {
+        if (this != &other) {
+            if (m_is_ok) {
+                m_ok_value.~T();
+            } else {
+                m_err_value.~E();
+            }
+
+            m_is_ok = other.m_is_ok;
+
+            if (m_is_ok) {
+                new (&m_ok_value) T(std::move(other.m_ok_value));
+            } else {
+                new (&m_err_value) E(std::move(other.m_err_value));
+            }
+        }
+
+        return *this;
     }
 
     ~Result() {
@@ -100,6 +149,22 @@ template <typename T, typename E> class Result {
     template <typename FnType> auto unwrap_or_else(FnType func) const -> T {
         if (!m_is_ok) { func(m_err_value); }
         return m_ok_value;
+    }
+
+    template <typename OkFn, typename ErrFn>
+    auto match(OkFn ok_func, ErrFn err_func) const -> void {
+        if (!m_is_ok) {
+            err_func(m_err_value);
+            return;
+        }
+
+        ok_func(m_ok_value);
+    }
+
+    template <typename Fn>
+    auto map_err(Fn func) const -> Result<T, decltype(func(std::declval<E>()))> {
+        if (is_err()) { return Err<decltype(func(std::declval<E>()))>(func(m_err_value)); }
+        return Ok<T>(m_ok_value);
     }
 
     auto expect(const std::string &message) const -> const T & {
