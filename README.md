@@ -2,10 +2,10 @@
 <p align="center">
     <img src="https://img.shields.io/badge/C%2B%2B-17-b4befe?style=for-the-badge&labelColor=1e1e2e" />
     <img src="https://img.shields.io/badge/license-MIT-a6e3a1?style=for-the-badge&labelColor=1e1e2e" />
-    <img src="https://img.shields.io/badge/version-1.0.0-fab387?style=for-the-badge&labelColor=1e1e2e" />
+    <img src="https://img.shields.io/github/v/tag/forgor0x10/brief-cpp?include_prereleases&style=for-the-badge&label=version&labelColor=1e1e2e&color=fab387" />
 </p>
 
-A lightweight, zero-overhead C++17 utility header with aliases and helper macros inspired by modern languages like **Python** and **Rust**
+A lightweight, zero-overhead collection of C++17 headers with aliases and helper macros inspired by modern languages like **Python** and **Rust**
 
 ## Features
 
