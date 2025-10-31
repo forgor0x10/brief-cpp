@@ -11,6 +11,7 @@
 #include <mutex>
 #include <optional>
 #include <queue>
+#include <ratio>
 #include <set>
 #include <stack>
 #include <string>
@@ -47,29 +48,68 @@ template <typename T> using Vec = std::vector<T>;
 template <typename T> using List = std::list<T>;
 template <typename T> using Deque = std::deque<T>;
 template <typename T, std::size_t N> using Array = std::array<T, N>;
-template <typename T> using Set = std::set<T>;
-template <typename T> using USet = std::unordered_set<T>;
-template <typename Key, typename Value> using Map = std::map<Key, Value>;
-template <typename Key, typename Value> using UMap = std::unordered_map<Key, Value>;
+
 template <typename T> using Stack = std::stack<T>;
 template <typename T> using Queue = std::queue<T>;
 template <typename T> using PQueue = std::priority_queue<T>;
+
+template <typename T> using Set = std::set<T>;
+template <typename T> using USet = std::unordered_set<T>;
+template <typename K, typename V> using Map = std::map<K, V>;
+template <typename K, typename V> using UMap = std::unordered_map<K, V>;
+
 template <typename T1, typename T2> using Pair = std::pair<T1, T2>;
 template <typename... Args> using Tuple = std::tuple<Args...>;
+template <typename... Args> using Variant = std::variant<Args...>;
+template <typename T> using Optional = std::optional<T>;
+
 template <typename T> using SharedPtr = std::shared_ptr<T>;
 template <typename T> using UniquePtr = std::unique_ptr<T>;
 template <typename T> using WeakPtr = std::weak_ptr<T>;
-template <typename T> using Optional = std::optional<T>;
-template <typename... Args> using Variant = std::variant<Args...>;
 
-inline constexpr std::nullopt_t none = std::nullopt;
+using Mutex = std::mutex;
+using LockGuard = std::lock_guard<Mutex>;
+using UniqueLock = std::unique_lock<Mutex>;
 
-template <typename T, typename... Args>
-inline auto make_shared(Args &&...args) -> std::shared_ptr<T> {
-    return std::make_shared<T>(std::forward<Args>(args)...);
-}
+using std::cerr;
+using std::cout;
+using std::nullopt;
 
-template <typename T, typename... Args>
-inline auto make_unique(Args &&...args) -> std::unique_ptr<T> {
-    return std::make_unique<T>(std::forward<Args>(args)...);
-}
+using std::endl;
+
+using std::make_shared;
+using std::make_unique;
+
+using std::forward;
+using std::move;
+using std::swap;
+
+namespace chr {
+template <typename Rep, typename Period> using Duration = std::chrono::duration<Rep, Period>;
+
+using Nanoseconds = std::chrono::nanoseconds;
+using Microseconds = std::chrono::microseconds;
+using Milliseconds = std::chrono::milliseconds;
+using Seconds = std::chrono::seconds;
+using Minutes = std::chrono::minutes;
+using Hours = std::chrono::hours;
+
+using SteadyClock = std::chrono::steady_clock;
+using SystemClock = std::chrono::system_clock;
+} // namespace chr
+
+namespace fs {
+using Path = std::filesystem::path;
+using DirEntry = std::filesystem::directory_entry;
+using DirIter = std::filesystem::directory_iterator;
+using RecDirIter = std::filesystem::recursive_directory_iterator;
+
+using FileStatus = std::filesystem::file_status;
+using FileType = std::filesystem::file_type;
+using Perms = std::filesystem::perms;
+using SpaceInfo = std::filesystem::space_info;
+
+using DirOptions = std::filesystem::directory_options;
+using CopyOptions = std::filesystem::copy_options;
+using FileTime = std::filesystem::file_time_type;
+} // namespace fs
