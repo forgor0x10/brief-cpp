@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <type_traits>
 #include <utility>
 
 #define etry(expr)                                                                                 \
@@ -22,6 +23,16 @@
 #undef atry
 #undef etry
 #endif
+
+namespace {
+template <typename, typename = void> struct IsPrintable : std::false_type {};
+
+template <typename T>
+struct IsPrintable<T, std::void_t<decltype(std::declval<std::ostream &>() << std::declval<T>())>>
+    : std::true_type {};
+
+template <typename T> constexpr bool is_printable_v = IsPrintable<T>::value;
+} // namespace
 
 template <typename T> struct Ok {
   public:
@@ -128,8 +139,12 @@ template <typename T, typename E> class Result {
 
     auto unwrap() const -> const T & {
         if (!m_is_ok) {
-            std::cerr << "Called `Result::unwrap()` on an `Err` value: " << m_err_value << "\n";
-            std::abort();
+            if constexpr (is_printable_v<T>) {
+                std::cerr << "Called `Result::unwrap_err()` on an `Ok` value: " << m_ok_value
+                          << "\n";
+            } else {
+                std::cerr << "Called `Result::unwrap_err()` on an `Ok` value\n";
+            }
         }
 
         return m_ok_value;
@@ -137,8 +152,11 @@ template <typename T, typename E> class Result {
 
     auto unwrap_err() const -> const E & {
         if (m_is_ok) {
-            std::cerr << "Called `Result::unwrap_err()` on an `Ok` value: " << m_ok_value << "\n";
-            std::abort();
+            if (is_printable_v<E>) {
+                std::cerr << "Called `Result::unwrap()` on an `Err` value: " << m_err_value << "\n";
+            } else {
+                std::cerr << "Called `Result::unwrap()` on an `Err` value\n";
+            }
         }
 
         return m_err_value;
