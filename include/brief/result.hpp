@@ -34,6 +34,15 @@ struct IsPrintable<T, std::void_t<decltype(std::declval<std::ostream &>() << std
 template <typename T> constexpr bool is_printable_v = IsPrintable<T>::value;
 } // namespace
 
+struct Unit {
+    constexpr explicit Unit() noexcept = default;
+};
+
+inline auto operator<<(std::ostream &stream, const Unit &unit) noexcept -> std::ostream & {
+    (void)unit;
+    return stream << "Unit{}";
+}
+
 template <typename T> struct Ok {
   public:
     explicit Ok(T val) : value(std::move(val)) {}
