@@ -97,6 +97,8 @@ using std::move;
 using std::swap;
 
 namespace chr {
+using namespace std::chrono;
+
 template <typename Rep, typename Period> using Duration = std::chrono::duration<Rep, Period>;
 
 using Nanoseconds = std::chrono::nanoseconds;
@@ -111,6 +113,8 @@ using SystemClock = std::chrono::system_clock;
 } // namespace chr
 
 namespace fs {
+using namespace std::filesystem;
+
 using Path = std::filesystem::path;
 using DirEntry = std::filesystem::directory_entry;
 using DirIter = std::filesystem::directory_iterator;
