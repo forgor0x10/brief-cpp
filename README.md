@@ -18,9 +18,10 @@ A lightweight, zero-overhead collection of C++17 headers with aliases and helper
 ## Example
 
 ```cpp
-#include <brief/brief.hpp>
+#include <brief/aliases.hpp>
+#include <brief/io.hpp>
 
-fn main() -> i32 {
+fn main() {
     let name = String("World");
     println("Hello, ", name, "!");
 
@@ -34,8 +35,6 @@ fn main() -> i32 {
     } else {
         println("None");
     }
-
-    return 0;
 }
 ```
 
